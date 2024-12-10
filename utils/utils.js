@@ -2,7 +2,7 @@ import fs from "fs";
 import { registerFont, loadImage } from "canvas";
 import Konva from "konva";
 import fetch from "node-fetch";
-import { replaceSvgColors } from "./utils/svg.js";
+import { replaceSvgColors } from "./svg.js";
 
 export async function loadGoogleFont(fontFamily) {
     try {

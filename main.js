@@ -9,7 +9,7 @@ global.window = dom.window;
 global.document = dom.window.document;
 global.navigator = dom.window.navigator;
 
-import { renderTemplate, makeTemplate } from "./utils/utils.js";
+import { renderTemplate, magicResize } from "./utils/utils.js";
 
 const templates = JSON.parse(fs.readFileSync("./templates/templates.json", "utf8"));
 
