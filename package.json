@@ -1,0 +1,21 @@
+{
+    "name": "konva-renderer",
+    "version": "1.0.0",
+    "main": "main.js",
+    "type": "module",
+    "scripts": {
+        "start": "node main.js",
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "author": "",
+    "license": "ISC",
+    "description": "",
+    "dependencies": {
+        "@webtoon/psd": "^0.4.0",
+        "axios": "^1.7.9",
+        "canvas": "^2.11.2",
+        "jsdom": "^25.0.1",
+        "konva": "^9.3.16",
+        "node-fetch": "^3.3.2"
+    }
+}
