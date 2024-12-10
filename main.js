@@ -267,8 +267,9 @@ const templates = JSON.parse(fs.readFileSync("./templates/templates.json", "utf8
 
 for (let i = 0; i < templates.length; i++) {
     const template = templates[i];
-    console.log(`${i + 1}/${templates.length}`);
+    console.time(`${i + 1}/${templates.length}`);
     await renderTemplate(template, `template-${i + 1}`);
+    console.timeEnd(`${i + 1}/${templates.length}`);
 }
 
 // await renderTemplate(resizedTemplate, `test`);
