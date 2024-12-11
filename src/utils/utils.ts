@@ -1,9 +1,9 @@
 import fs from "fs";
-import { registerFont, loadImage } from "canvas";
+import { createCanvas,GlobalFonts, loadImage } from "@napi-rs/canvas";
 import Konva from "konva";
 import fetch from "node-fetch";
 import { replaceSvgColors } from "./svg.js";
-
+import can from  'canvas'
 
 export async function loadGoogleFont(fontFamily: string) {
     try {
@@ -28,7 +28,7 @@ export async function loadGoogleFont(fontFamily: string) {
         fs.writeFileSync(fontPath, Buffer.from(fontBuffer));
 
         // Register the font with node-canvas
-        registerFont(fontPath, { family: fontFamily });
+        GlobalFonts.registerFromPath(fontPath,fontFamily);
 
         return true;
     } catch (error) {
@@ -136,15 +136,14 @@ export async function renderTemplate(template: any, name: string) {
                         // Handle base64 encoded images
                         const base64Data = element.src.split(",")[1];
                         const imageBuffer = Buffer.from(base64Data, "base64");
-                        image = await loadImage(imageBuffer);
+                        image = await can.loadImage(imageBuffer);
                     } else {
                         // Handle URL-based images
                         const response = await fetch(element.src);
                         const arrayBuffer = await response.arrayBuffer();
                         const buffer = Buffer.from(arrayBuffer);
-                        image = await loadImage(buffer);
+                        image = await can.loadImage(buffer);
                     }
-
                     const imageNode = new Konva.Image({
                         id: element.id,
                         name: element.name,
@@ -215,13 +214,17 @@ export async function renderTemplate(template: any, name: string) {
                     // Convert modified SVG back to buffer
                     const svgData = Buffer.from(finalSvgString);
                     const image = await loadImage(svgData);
+                    
+                    const canvas = createCanvas(image.width,image.height)
+                    const ctx = canvas.getContext('2d')
+                    ctx.drawImage(image, 0, 0,image.width, image.height)
 
                     const svgNode = new Konva.Image({
                         id: element.id,
                         name: element.name,
                         x: element.x,
                         y: element.y,
-                        image: image as unknown as HTMLImageElement,
+                        image: await can.loadImage(canvas.encodeSync("png")) as unknown as HTMLImageElement,
                         width: element.width,
                         height: element.height,
                         rotation: element.rotation,

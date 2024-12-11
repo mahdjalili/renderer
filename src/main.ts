@@ -24,8 +24,8 @@ interface Template {
 const templates: Template[] = JSON.parse(fs.readFileSync("./src/templates/templates.json", "utf8"));
 const template: Template = JSON.parse(fs.readFileSync("./src/templates/template.json", "utf8"));
 
+await renderTemplate(template,"test")
 
-
-for (var i = 0; i < 10; i++) {
-    await renderTemplate(templates[i], `template-${i}`);
-}
+// for (var i = 0; i < 10; i++) {
+//     await renderTemplate(templates[i], `template-${i}`);
+// }
