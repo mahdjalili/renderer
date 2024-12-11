@@ -1,9 +1,9 @@
-export const loadSVG = async (svgData) => {
+export const loadSVG = async (svgData: string) => {
     const svg = new DOMParser().parseFromString(svgData, "image/svg+xml");
     return svg;
 };
 
-export function replaceSvgColors(svgString, colorsReplace) {
+export function replaceSvgColors(svgString: string, colorsReplace: Record<string, string>) {
     let modifiedSvgString = svgString;
     if (colorsReplace) {
         Object.entries(colorsReplace).forEach(([fromColor, toColor]) => {

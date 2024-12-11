@@ -1,6 +1,6 @@
 import Psd from "@webtoon/psd";
 
-export function traverseNode(node) {
+export function traverseNode(node: any) {
     if (node.type === "Layer") {
         console.log("Layer", node);
     } else if (node.type === "Group") {
@@ -11,10 +11,10 @@ export function traverseNode(node) {
         throw new Error("Invalid node type");
     }
 
-    node.children?.forEach((child) => traverseNode(child));
+    node.children?.forEach((child: any) => traverseNode(child));
 }
 
-export const openPsd = (psdData) => {
+export const openPsd = (psdData: any) => {
     const psdFile = Psd.parse(psdData);
     return psdFile;
 };

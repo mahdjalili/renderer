@@ -4,7 +4,8 @@ import Konva from "konva";
 import fetch from "node-fetch";
 import { replaceSvgColors } from "./svg.js";
 
-export async function loadGoogleFont(fontFamily) {
+
+export async function loadGoogleFont(fontFamily: string) {
     try {
         // Convert font family name to URL format
         const fontQuery = fontFamily.replace(/\s+/g, "+");
@@ -36,7 +37,7 @@ export async function loadGoogleFont(fontFamily) {
     }
 }
 
-export async function renderTemplate(template, name) {
+export async function renderTemplate(template: any, name: string) {
     // Create stage with template dimensions
     const stage = new Konva.Stage({
         width: template.width,
@@ -149,7 +150,7 @@ export async function renderTemplate(template, name) {
                         name: element.name,
                         x: element.x,
                         y: element.y,
-                        image: image,
+                        image: image as unknown as HTMLImageElement,
                         width: element.width,
                         height: element.height,
                         rotation: element.rotation,
@@ -188,8 +189,8 @@ export async function renderTemplate(template, name) {
                         strokeWidth: element.borderSize,
                     });
                     layer.add(imageNode);
-                } catch (error) {
-                    // console.error(`Error loading image:`, error);
+                } catch (error: any) {
+                    console.error(`Error loading image:`, error.message);
                     // Optionally, you could add a placeholder image here
                 }
                 break;
@@ -220,7 +221,7 @@ export async function renderTemplate(template, name) {
                         name: element.name,
                         x: element.x,
                         y: element.y,
-                        image: image,
+                        image: image as unknown as HTMLImageElement,
                         width: element.width,
                         height: element.height,
                         rotation: element.rotation,
@@ -252,8 +253,8 @@ export async function renderTemplate(template, name) {
                         grayscaleEnabled: element.grayscaleEnabled,
                     });
                     layer.add(svgNode);
-                } catch (err) {
-                    console.error(`Failed to load SVG: ${err.message}`);
+                } catch (err: any) {
+                    console.error(`Failed to load SVG: ${err}`);
                 }
                 break;
 
@@ -279,12 +280,12 @@ export async function renderTemplate(template, name) {
     // Render the stage to the canvas
     const canvas = stage.toCanvas();
     const out = fs.createWriteStream(`./result/${name}.png`);
-    const stream = canvas.createPNGStream();
+    const stream = (canvas as any).createPNGStream();
     stream.pipe(out);
     out.on("finish", () => console.log(`Image saved as ${name}.png`));
 }
 
-export function magicResize(template, newWidth, newHeight) {
+export function magicResize(template: any, newWidth: number, newHeight: number) {
     // Get original dimensions
     const originalWidth = template.width;
     const originalHeight = template.height;
@@ -301,8 +302,8 @@ export function magicResize(template, newWidth, newHeight) {
     resizedTemplate.height = newHeight;
 
     // Resize all elements in all pages
-    resizedTemplate.pages.forEach((page) => {
-        page.children.forEach((element) => {
+    resizedTemplate.pages.forEach((page: any) => {
+        page.children.forEach((element: any) => {
             // For images and SVGs, maintain aspect ratio
             if (element.type === "image" || element.type === "svg") {
                 const scale = Math.min(scaleX, scaleY);
