@@ -4,7 +4,7 @@ WORKDIR /app
 
 COPY . .
 
-RUN bun i 
+RUN bun i
 
 EXPOSE 3000
 

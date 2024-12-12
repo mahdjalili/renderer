@@ -1,4 +1,5 @@
 DS_Store
+/src/templates
 /node_modules
 /result
 .vscode
