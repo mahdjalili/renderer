@@ -9,7 +9,8 @@ export async function loadGoogleFont(fontFamily: string) {
     try {
         // Convert font family name to URL format
         let fontPath = `./tmp/${fontFamily.replace(/\s+/g, "_")}.ttf`
-        if (!Bun.file(fontPath)) {
+
+        if (!await Bun.file(fontPath).exists()) {
             const fontQuery = fontFamily.replace(/\s+/g, "+");
             const response = await fetch(`https://fonts.googleapis.com/css2?family=${fontQuery}`);
             const css = await response.text();
@@ -25,7 +26,9 @@ export async function loadGoogleFont(fontFamily: string) {
         const fontBuffer = await fontResponse.arrayBuffer();
 
         // Save the font file
-        fs.writeFileSync(fontPath, Buffer.from(fontBuffer));
+        let write = Bun.file(fontPath).writer()
+        write.write(Buffer.from(fontBuffer))
+        write.flush()
 
         // Register the font with node-canvas
         }
