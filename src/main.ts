@@ -2,6 +2,25 @@ import { renderTemplate, magicResize } from "./utils/utils.js";
 import { Elysia, t } from "elysia";
 import { swagger } from '@elysiajs/swagger'
 
+const port = process.env.PORT || 3000
+
+const resize = new Elysia()
+    .post("/resize", async ({ body }) => {
+        let template = magicResize(body.template, body.data.width, body.data.height)
+        return {template}
+    }, {
+        body: t.Object({
+            template: t.Any(),
+            data: t.Object({
+                width: t.Number(),
+                height: t.Number(),
+            })
+        }),
+        response: t.Object({
+            template: t.Any(),
+        })
+    })
+
 const render = new Elysia()
     .post('/render', async ({ body }) => {
         let image = await renderTemplate(body.template);
@@ -9,9 +28,6 @@ const render = new Elysia()
     }, {
         body: t.Object({
             template: t.Any(),
-            data: t.Object({
-                name: t.String(),
-            })
         }),
         response: t.Object({
             image: t.String(),
@@ -37,8 +53,7 @@ const render = new Elysia()
 const app = new Elysia()
     .use(swagger())
     .use(render)
-	.listen(3000)
-    .onStart(() => {
-        console.log("App Started on port 3000")
-    })
+    .use(resize)
+	.listen(port)
 
+console.log(`App started on port ${port}`)
