@@ -1,9 +1,9 @@
 import fs from "fs";
-import { createCanvas,GlobalFonts, loadImage } from "@napi-rs/canvas";
+import { createCanvas ,loadImage } from "@napi-rs/canvas";
+import { loadImage as loadImageCanvas, registerFont } from  'canvas'
 import Konva from "konva";
 import fetch from "node-fetch";
 import { replaceSvgColors } from "./svg.js";
-import can from  'canvas'
 
 export async function loadGoogleFont(fontFamily: string) {
     try {
@@ -28,7 +28,7 @@ export async function loadGoogleFont(fontFamily: string) {
         fs.writeFileSync(fontPath, Buffer.from(fontBuffer));
 
         // Register the font with node-canvas
-        GlobalFonts.registerFromPath(fontPath,fontFamily);
+        registerFont(fontPath, {family: fontFamily});
 
         return true;
     } catch (error) {
@@ -136,13 +136,13 @@ export async function renderTemplate(template: any, name: string) {
                         // Handle base64 encoded images
                         const base64Data = element.src.split(",")[1];
                         const imageBuffer = Buffer.from(base64Data, "base64");
-                        image = await can.loadImage(imageBuffer);
+                        image = await loadImageCanvas(imageBuffer);
                     } else {
                         // Handle URL-based images
                         const response = await fetch(element.src);
                         const arrayBuffer = await response.arrayBuffer();
                         const buffer = Buffer.from(arrayBuffer);
-                        image = await can.loadImage(buffer);
+                        image = await loadImageCanvas(buffer);
                     }
                     const imageNode = new Konva.Image({
                         id: element.id,
@@ -224,7 +224,7 @@ export async function renderTemplate(template: any, name: string) {
                         name: element.name,
                         x: element.x,
                         y: element.y,
-                        image: await can.loadImage(canvas.encodeSync("png")) as unknown as HTMLImageElement,
+                        image: await loadImageCanvas(canvas.encodeSync("png")) as unknown as HTMLImageElement,
                         width: element.width,
                         height: element.height,
                         rotation: element.rotation,
