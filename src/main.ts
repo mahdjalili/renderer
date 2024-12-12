@@ -38,4 +38,7 @@ const app = new Elysia()
     .use(swagger())
     .use(render)
 	.listen(3000)
+    .onStart(() => {
+        console.log("App Started on port 3000")
+    })
 
