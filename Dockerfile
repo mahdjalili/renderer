@@ -8,4 +8,4 @@ RUN bun i
 
 EXPOSE 3000
 
-CMD [ "bun",'start' ]
+CMD [ "bash","-c","/usr/local/bin/bun","start" ]
