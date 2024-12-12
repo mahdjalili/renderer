@@ -54,6 +54,7 @@ const app = new Elysia()
     .use(swagger())
     .use(render)
     .use(resize)
+    .get("/", "Hello World")
 	.listen(port)
 
 console.log(`App started on port ${port}`)

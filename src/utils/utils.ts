@@ -8,7 +8,7 @@ import { replaceSvgColors } from "./svg.js";
 export async function loadGoogleFont(fontFamily: string) {
     try {
         // Convert font family name to URL format
-        let fontPath = `/tmp/${fontFamily.replace(/\s+/g, "_")}.ttf`
+        let fontPath = `../tmp/${fontFamily.replace(/\s+/g, "_")}.ttf`
         if (!Bun.file(fontPath)) {
             const fontQuery = fontFamily.replace(/\s+/g, "+");
             const response = await fetch(`https://fonts.googleapis.com/css2?family=${fontQuery}`);
