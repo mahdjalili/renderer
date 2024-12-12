@@ -1,4 +1,3 @@
-import fs from "fs";
 import { createCanvas ,loadImage } from "@napi-rs/canvas";
 import { loadImage as loadImageCanvas, registerFont } from  'canvas'
 import Konva from "konva";
@@ -23,13 +22,8 @@ export async function loadGoogleFont(fontFamily: string) {
         // Download the font file
         const fontUrl = fontUrlMatch[1];
         const fontResponse = await fetch(fontUrl);
-        const fontBuffer = await fontResponse.arrayBuffer();
 
-        // Save the font file
-        let writer = Bun.file(fontPath).writer()
-        writer.write(Buffer.from(fontBuffer))
-        writer.flush()
-        writer.end()
+        await Bun.write(fontPath, await fontResponse.blob())
 
         // Register the font with node-canvas
         }
