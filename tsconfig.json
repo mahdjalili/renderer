@@ -7,8 +7,8 @@
         "esModuleInterop": true,
         "skipLibCheck": true,
         "removeComments": true,
-        "outDir": "./",
-        "rootDir": "./",
+        "outDir": "./dist",
+        "rootDir": "./src",
         "allowSyntheticDefaultImports": true
     },
     "include": ["src/**/*.ts"],

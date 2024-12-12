@@ -8,9 +8,12 @@ import { replaceSvgColors } from "./svg.js";
 export async function loadGoogleFont(fontFamily: string) {
     try {
         // Convert font family name to URL format
-        const fontQuery = fontFamily.replace(/\s+/g, "+");
-        const response = await fetch(`https://fonts.googleapis.com/css2?family=${fontQuery}`);
-        const css = await response.text();
+        let fontPath = `/tmp/${fontFamily.replace(/\s+/g, "_")}.ttf`
+        if (!Bun.file(fontPath)) {
+            const fontQuery = fontFamily.replace(/\s+/g, "+");
+            const response = await fetch(`https://fonts.googleapis.com/css2?family=${fontQuery}`);
+            const css = await response.text();
+
 
         // Extract the font URL from the CSS
         const fontUrlMatch = css.match(/src: url\((.+?)\)/);
@@ -21,13 +24,11 @@ export async function loadGoogleFont(fontFamily: string) {
         const fontResponse = await fetch(fontUrl);
         const fontBuffer = await fontResponse.arrayBuffer();
 
-        // Generate a temporary file path for the font
-        const fontPath = `/tmp/${fontFamily.replace(/\s+/g, "_")}.ttf`;
-
         // Save the font file
         fs.writeFileSync(fontPath, Buffer.from(fontBuffer));
 
         // Register the font with node-canvas
+        }
         registerFont(fontPath, {family: fontFamily});
 
         return true;
@@ -37,12 +38,12 @@ export async function loadGoogleFont(fontFamily: string) {
     }
 }
 
-export async function renderTemplate(template: any, name: string) {
+export async function renderTemplate(template: any): Promise<string> {
     // Create stage with template dimensions
     const stage = new Konva.Stage({
         width: template.width,
         height: template.height,
-        container: document.createElement("div"), // This won't be used in Node.js
+        // container: document.createElement("div"), // This won't be used in Node.js
     });
 
     // Create main layer
@@ -282,10 +283,7 @@ export async function renderTemplate(template: any, name: string) {
 
     // Render the stage to the canvas
     const canvas = stage.toCanvas();
-    const out = fs.createWriteStream(`./result/${name}.png`);
-    const stream = (canvas as any).createPNGStream();
-    stream.pipe(out);
-    out.on("finish", () => console.log(`Image saved as ${name}.png`));
+    return canvas.toDataURL()
 }
 
 export function magicResize(template: any, newWidth: number, newHeight: number) {

@@ -1,31 +1,41 @@
-import fs from "fs";
-import { JSDOM } from "jsdom";
-
-declare global {
-    var window: Window & typeof globalThis;
-    var document: Document;
-    var navigator: Navigator;
-}
-
-const dom = new JSDOM("<!DOCTYPE html><html lang='fa' dir='rtl'><body></body></html>", {
-    pretendToBeVisual: true,
-});
-global.window = dom.window as unknown as (Window & typeof globalThis);
-global.document = dom.window.document;
-global.navigator = dom.window.navigator;
-
 import { renderTemplate, magicResize } from "./utils/utils.js";
+import { Elysia, t } from "elysia";
+import { swagger } from '@elysiajs/swagger'
 
-interface Template {
-    [key: string]: any;
-}
+const render = new Elysia()
+    .post('/render', async ({ body }) => {
+        let image = await renderTemplate(body.template);
+        return { image }
+    }, {
+        body: t.Object({
+            template: t.Any(),
+            data: t.Object({
+                name: t.String(),
+            })
+        }),
+        response: t.Object({
+            image: t.String(),
+        })
+    })
+    .post('/render/bulk', async ({ body }) => {
+        const images = await Promise.all(
+            body.templates.map(template => renderTemplate(template))
+        );
+        return { images }
+    }, {
+        body: t.Object({
+            templates: t.Array(t.Any()),
+            data: t.Object({
+                name: t.String(),
+            })
+        }),
+        response: t.Object({
+            images: t.Array(t.String()),
+        })
+    })
 
-// Read and parse JSON files with type assertions
-const templates: Template[] = JSON.parse(fs.readFileSync("./src/templates/templates.json", "utf8"));
-const template: Template = JSON.parse(fs.readFileSync("./src/templates/template.json", "utf8"));
+const app = new Elysia()
+    .use(swagger())
+    .use(render)
+	.listen(3000)
 
-// await renderTemplate(template, "template");
-
-for (var i = 0; i < 15; i++) {
-    await renderTemplate(templates[i], `template-${i}`);
-}
