@@ -26,9 +26,10 @@ export async function loadGoogleFont(fontFamily: string) {
         const fontBuffer = await fontResponse.arrayBuffer();
 
         // Save the font file
-        let write = Bun.file(fontPath).writer()
-        write.write(Buffer.from(fontBuffer))
-        write.flush()
+        let writer = Bun.file(fontPath).writer()
+        writer.write(Buffer.from(fontBuffer))
+        writer.flush()
+        writer.end()
 
         // Register the font with node-canvas
         }
