@@ -4,7 +4,6 @@ import Konva from "konva";
 import fetch from "node-fetch";
 import { replaceSvgColors } from "./svg.js";
 
-
 export async function loadGoogleFont(fontFamily: string) {
     try {
         // Convert font family name to URL format
