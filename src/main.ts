@@ -2,7 +2,23 @@ import { renderTemplate, magicResize } from "./utils/utils.js";
 import { Elysia, t } from "elysia";
 import { swagger } from '@elysiajs/swagger'
 
-const port = process.env.PORT || 3000
+const port = process.env.PORT || 3000;
+
+const templates = new Elysia()
+    .get('/templates/:id?', async ({params: {id}}) => {
+        const templates = Bun.file(`./src/templates/templates.json`, { type: "application/json" });
+        const template = await templates.json();
+
+        if (id) {
+            return { templates: [template[id]] }
+        }
+        
+        return { templates: template }
+    }, {
+        response: t.Object({
+            templates: t.Array(t.Any()),
+        })
+    })
 
 const resize = new Elysia()
     .post("/resize", async ({ body }) => {
@@ -37,7 +53,7 @@ const render = new Elysia()
         const images = await Promise.all(
             body.templates.map(template => renderTemplate(template))
         );
-        return { images }
+        return {images}
     }, {
         body: t.Object({
             templates: t.Array(t.Any()),
@@ -52,6 +68,7 @@ const render = new Elysia()
 
 const app = new Elysia()
     .use(swagger())
+    .use(templates)
     .use(render)
     .use(resize)
     .get("/", "Hello World")
