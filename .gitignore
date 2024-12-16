@@ -1,7 +1,5 @@
+node_modules
 DS_Store
-/src/templates
-/node_modules
-/result
 .vscode
-.result
-tmp/
+
+tmp
