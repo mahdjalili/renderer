@@ -4,21 +4,21 @@ import { cors } from "@elysiajs/cors";
 
 import { renderTemplate, magicResize } from "./utils/utils.js";
 
+const templatesFile = Bun.file(`./src/templates/templates.json`, {
+    type: "application/json",
+});
+const templates = await templatesFile.json();
+
 const port = process.env.PORT || 3000;
 
-const templates = new Elysia().get(
+const template = new Elysia().get(
     "/templates/:id?",
     async ({ params: { id } }) => {
-        const templates = Bun.file(`./src/templates/templates.json`, {
-            type: "application/json",
-        });
-        const template = await templates.json();
-
         if (id) {
-            return { templates: [template[id]] };
+            return { templates: [templates[id]] };
         }
 
-        return { templates: template };
+        return { templates: templates };
     },
     {
         response: t.Object({
@@ -91,7 +91,7 @@ const app = new Elysia()
         })
     )
     .use(swagger())
-    .use(templates)
+    .use(template)
     .use(render)
     .use(resize)
     .get("/", "Hello World")
