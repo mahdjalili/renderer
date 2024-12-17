@@ -85,8 +85,9 @@ const render = new Elysia()
 const app = new Elysia()
     .use(
         cors({
-            origin: "*",
+            origin: ["http://localhost:3000", "http://127.0.0.1:3000"], // Allow localhost explicitly
             methods: ["GET", "POST", "OPTIONS"],
+            credentials: true, // Allow credentials (cookies, etc.)
         })
     )
     .use(swagger())
