@@ -83,7 +83,12 @@ const render = new Elysia()
     );
 
 const app = new Elysia()
-    .use(cors())
+    .use(
+        cors({
+            origin: "*",
+            methods: ["GET", "POST", "OPTIONS"],
+        })
+    )
     .use(swagger())
     .use(templates)
     .use(render)
