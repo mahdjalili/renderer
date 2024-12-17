@@ -1,6 +1,8 @@
-import { renderTemplate, magicResize } from "./utils/utils.js";
 import { Elysia, t } from "elysia";
 import { swagger } from "@elysiajs/swagger";
+import { cors } from "@elysiajs/cors";
+
+import { renderTemplate, magicResize } from "./utils/utils.js";
 
 const port = process.env.PORT || 3000;
 
@@ -80,6 +82,13 @@ const render = new Elysia()
         }
     );
 
-const app = new Elysia().use(swagger()).use(templates).use(render).use(resize).get("/", "Hello World").listen(port);
+const app = new Elysia()
+    .use(cors())
+    .use(swagger())
+    .use(templates)
+    .use(render)
+    .use(resize)
+    .get("/", "Hello World")
+    .listen(port);
 
 console.log(`App started on port ${port}`);
