@@ -3,6 +3,7 @@ import { swagger } from "@elysiajs/swagger";
 import { cors } from "@elysiajs/cors";
 
 import { renderTemplate, magicResize } from "./utils/utils.js";
+import { paginate, paginateType } from "./utils/paginate.js";
 
 const templatesFile = Bun.file(`./src/templates/templates.json`, {
     type: "application/json",
@@ -11,21 +12,32 @@ const templates = await templatesFile.json();
 
 const port = process.env.PORT || 3000;
 
-const template = new Elysia().get(
-    "/templates/:id?",
-    async ({ params: { id } }) => {
-        if (id) {
-            return { templates: [templates[id]] };
+const template = new Elysia()
+    .get(
+        "/templates",
+        ({ query: { page = 1, limit = 10 } }) => {
+            return paginate(templates, page, limit);
+        },
+        {
+            query: t.Object({
+                page: t.Optional(t.Number()),
+                limit: t.Optional(t.Number()),
+            }),
+            response: paginateType,
         }
-
-        return { templates: templates };
-    },
-    {
-        response: t.Object({
-            templates: t.Array(t.Any()),
-        }),
-    }
-);
+    )
+    .get(
+        "/templates/:id",
+        async ({ params: { id }, query: { page = 1, limit = 10 } }) => {
+            return [templates[id]];
+        },
+        {
+            params: t.Object({
+                id: t.Number(),
+            }),
+            response: t.Array(t.Any()),
+        }
+    );
 
 const resize = new Elysia().post(
     "/resize",
@@ -87,7 +99,7 @@ const app = new Elysia()
         cors({
             origin: "*",
             methods: "*",
-            credentials: true, // Allow credentials (cookies, etc.)
+            credentials: true,
         })
     )
     .use(swagger())
