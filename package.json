@@ -1,22 +1,16 @@
 {
     "name": "konva-renderer",
     "version": "1.0.0",
-    "main": "main.js",
     "type": "module",
     "scripts": {
-        "dev": "bun --watch src/main.ts",
-        "build": "bun build src/main.ts --target bun --outdir ./dist",
-        "start": "NODE_ENV=production bun src/main.ts",
-        "format": "bun prettier --write './src/**/*.ts'",
+        "dev": "bun --watch src/app.ts",
+        "build": "bun build src/app.ts --target bun --outdir ./dist",
+        "start": "NODE_ENV=production bun src/app.ts",
         "test": "bun test"
     },
     "author": "",
     "license": "ISC",
     "description": "",
-    "imports": {
-        "#*": "./src/*",
-        "#utils/*": "./src/utils/*"
-    },
     "dependencies": {
         "@elysiajs/cors": "^1.1.1",
         "@elysiajs/swagger": "^1.1.6",

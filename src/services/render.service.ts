@@ -2,7 +2,23 @@ import { createCanvas, loadImage } from "@napi-rs/canvas";
 import { loadImage as loadImageCanvas, registerFont } from "canvas";
 import Konva from "konva";
 import fetch from "node-fetch";
-import { replaceSvgColors } from "./svg.js";
+
+export const loadSVG = async (svgData: string) => {
+    const svg = new DOMParser().parseFromString(svgData, "image/svg+xml");
+    return svg;
+};
+
+export function replaceSvgColors(svgString: string, colorsReplace: Record<string, string>) {
+    let modifiedSvgString = svgString;
+    if (colorsReplace) {
+        Object.entries(colorsReplace).forEach(([fromColor, toColor]) => {
+            // Create a regex to match the color, accounting for possible spaces
+            const colorRegex = new RegExp(fromColor.replace(/[()]/g, "\\$&").replace(/\s+/g, "\\s*"), "g");
+            modifiedSvgString = modifiedSvgString.replace(colorRegex, toColor);
+        });
+    }
+    return modifiedSvgString;
+}
 
 export async function loadGoogleFont(fontFamily: string) {
     try {
@@ -144,7 +160,6 @@ export async function renderTemplate(template: any): Promise<string> {
                         image = await loadImageCanvas(buffer);
                     }
 
-
                     const imageNode = new Konva.Image({
                         id: element.id,
                         name: element.name,
@@ -284,62 +299,4 @@ export async function renderTemplate(template: any): Promise<string> {
     // Render the stage to the canvas
     const canvas = stage.toCanvas();
     return canvas.toDataURL();
-}
-
-export function magicResize(template: any, newWidth: number, newHeight: number) {
-    // Get original dimensions
-    const originalWidth = template.width;
-    const originalHeight = template.height;
-
-    // Calculate scale factors
-    const scaleX = newWidth / originalWidth;
-    const scaleY = newHeight / originalHeight;
-
-    // Create deep copy of template
-    const resizedTemplate = JSON.parse(JSON.stringify(template));
-
-    // Update template dimensions
-    resizedTemplate.width = newWidth;
-    resizedTemplate.height = newHeight;
-
-    // Resize all elements in all pages
-    resizedTemplate.pages.forEach((page: any) => {
-        page.children.forEach((element: any) => {
-            // For images and SVGs, maintain aspect ratio
-            if (element.type === "image" || element.type === "svg") {
-                const scale = Math.min(scaleX, scaleY);
-                const newElementWidth = element.width * scale;
-                const newElementHeight = element.height * scale;
-
-                // Scale position
-                element.x *= scaleX;
-                element.y *= scaleY;
-
-                // Update dimensions while maintaining aspect ratio
-                element.width = newElementWidth;
-                element.height = newElementHeight;
-            } else {
-                // For other elements, scale normally
-                element.x *= scaleX;
-                element.y *= scaleY;
-                element.width *= scaleX;
-                element.height *= scaleY;
-            }
-
-            // Scale font size if it's a text element
-            if (element.type === "text") {
-                element.fontSize *= scaleX;
-            }
-
-            // Scale other properties that might need scaling
-            if (element.shadowBlur) element.shadowBlur *= scaleX;
-            if (element.shadowOffsetX) element.shadowOffsetX *= scaleX;
-            if (element.shadowOffsetY) element.shadowOffsetY *= scaleY;
-            if (element.borderSize) element.borderSize *= scaleX;
-            if (element.cornerRadius) element.cornerRadius *= scaleX;
-            if (element.blurRadius) element.blurRadius *= scaleX;
-        });
-    });
-
-    return resizedTemplate;
 }
