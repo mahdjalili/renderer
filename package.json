@@ -16,16 +16,19 @@
         "@elysiajs/swagger": "^1.1.6",
         "@napi-rs/canvas": "0.1.59",
         "@webtoon/psd": "^0.4.0",
+        "ag-psd": "^22.0.2",
         "axios": "^1.7.9",
         "canvas": "next",
         "elysia": "^1.1.26",
         "konva": "^9.3.16",
-        "node-fetch": "^3.3.2"
+        "node-fetch": "^3.3.2",
+        "psd": "^3.4.0"
     },
     "devDependencies": {
         "@types/bun": "^1.1.14",
         "@types/jsdom": "^21.1.7",
         "@types/node": "^22.10.2",
+        "@types/psd": "^3.4.3",
         "typescript": "^5.7.2"
     }
 }

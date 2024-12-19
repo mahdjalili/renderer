@@ -1,7 +1,6 @@
-import { renderTemplate } from "../services/render.service";
-
 import { Elysia, t } from "elysia";
-
+import { renderTemplate } from "../services/render.service";
+    
 export const render = new Elysia()
     .post(
         "/render",
