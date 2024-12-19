@@ -63,23 +63,23 @@ const render = new Elysia()
     .post(
         "/render",
         async ({ body }) => {
-            let image = await renderTemplate(body.template);
-            return { image };
+            let result = await renderTemplate(body.template);
+            return { result };
         },
         {
             body: t.Object({
                 template: t.Any(),
             }),
             response: t.Object({
-                image: t.String(),
+                result: t.String(),
             }),
         }
     )
     .post(
         "/render/bulk",
         async ({ body }) => {
-            const images = await Promise.all(body.templates.map((template) => renderTemplate(template)));
-            return { images };
+            const results = await Promise.all(body.templates.map((template) => renderTemplate(template)));
+            return { results };
         },
         {
             body: t.Object({
@@ -89,7 +89,7 @@ const render = new Elysia()
                 }),
             }),
             response: t.Object({
-                images: t.Array(t.String()),
+                results: t.Array(t.String()),
             }),
         }
     );
