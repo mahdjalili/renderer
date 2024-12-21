@@ -31,20 +31,19 @@ export const templates = new Elysia()
             response: t.Array(t.Any()),
         }
     )
-    .post(
+    .get(
         "/templates/converter",
         async ({ body }) => {
-            const psdFile = await Bun.file("./public/ban1.psd").arrayBuffer();
-            const template = convertPSDToTemplate(psdFile);
-
-            return { template };
+            const psdFile = await Bun.file("./public/single.psd").arrayBuffer();
+            const templates = convertPSDToTemplate(psdFile);
+            return { templates };
         },
         {
-            body: t.Object({
-                psd: t.String(),
-            }),
+            // body: t.Object({
+            //     psd: t.String(),
+            // }),
             response: t.Object({
-                template: t.Any(),
+                templates: t.Array(t.Any()),
             }),
         }
     );

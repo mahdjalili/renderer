@@ -76,6 +76,8 @@ export async function renderTemplate(template: any): Promise<string> {
     layer.add(background);
 
     // Process each element in the template
+    if (!page.children) return stage.toDataURL();
+
     for (const element of page.children) {
         switch (element.type.toLowerCase()) {
             case "text":
