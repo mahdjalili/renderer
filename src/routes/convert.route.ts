@@ -13,6 +13,11 @@ export const route = new Elysia().post(
             psdUrl: t.String(),
         }),
         response: t.Any(),
+        detail: {
+            description: "Convert PSD to template",
+            tags: ["Convert"],
+            summary: "Convert PSD to template",
+        },
     }
 );
 

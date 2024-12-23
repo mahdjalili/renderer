@@ -18,6 +18,11 @@ export const route = new Elysia().post(
         response: t.Object({
             template: t.Any(),
         }),
+        detail: {
+            description: "Resize template",
+            tags: ["Resize"],
+            summary: "Resize template",
+        },
     }
 );
 

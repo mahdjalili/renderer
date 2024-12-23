@@ -16,18 +16,28 @@ export const route = new Elysia()
                 limit: t.Optional(t.Number()),
             }),
             response: paginateType,
+            detail: {
+                description: "Get all templates",
+                tags: ["Templates"],
+                summary: "Get all templates",
+            },
         }
     )
     .get(
         "/templates/:id",
         async ({ params: { id } }) => {
-            return [templatesList[id]];
+            return templatesList[id];
         },
         {
             params: t.Object({
                 id: t.Number(),
             }),
-            response: t.Array(t.Any()),
+            response: t.Any(),
+            detail: {
+                description: "Get a template",
+                tags: ["Templates"],
+                summary: "Get a template",
+            },
         }
     );
 

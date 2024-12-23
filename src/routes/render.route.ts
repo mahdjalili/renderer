@@ -15,6 +15,11 @@ export const route = new Elysia()
             response: t.Object({
                 result: t.String(),
             }),
+            detail: {
+                description: "Render template",
+                tags: ["Render"],
+                summary: "Render template",
+            },
         }
     )
     .post(
@@ -33,6 +38,11 @@ export const route = new Elysia()
             response: t.Object({
                 results: t.Array(t.String()),
             }),
+            detail: {
+                description: "Render multiple templates",
+                tags: ["Render"],
+                summary: "Render multiple templates",
+            },
         }
     );
 
