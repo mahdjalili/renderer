@@ -1,6 +1,7 @@
 import axios from "axios";
 
 import { convertPSDToTemplate } from "../services/psd.service";
+import { replaceTemplateVariables } from "../services/resize.service";
 
 export default class Convert {
     convertPsdToTemplate = async (padUrl: string) => {
@@ -8,4 +9,6 @@ export default class Convert {
         const psdFile = response.data;
         return convertPSDToTemplate(psdFile);
     };
+
+    replaceTemplateVariables = replaceTemplateVariables;
 }
