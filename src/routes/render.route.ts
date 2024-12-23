@@ -1,7 +1,7 @@
 import { Elysia, t } from "elysia";
 import { renderTemplate } from "../services/render.service";
-    
-export const render = new Elysia()
+
+export const route = new Elysia()
     .post(
         "/render",
         async ({ body }) => {
@@ -35,3 +35,5 @@ export const render = new Elysia()
             }),
         }
     );
+
+export default route;

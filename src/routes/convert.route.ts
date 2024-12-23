@@ -1,17 +1,19 @@
 import { Elysia, t } from "elysia";
-import { convertPSDToTemplate } from "../services/psd.service";
+import Controller from "../controllers/convert.controller";
 
-export const convert = new Elysia().get(
+const convert = new Controller();
+
+export const route = new Elysia().post(
     "/convert/psd",
-    async () => {
-        const psdFile = await Bun.file("./public/single.psd").arrayBuffer();
-        const template = convertPSDToTemplate(psdFile);
-        return template;
+    async ({ body }) => {
+        return await convert.convertPsdToTemplate(body.psdUrl);
     },
     {
-        // body: t.Object({
-        //     psd: t.String(),
-        // }),
+        body: t.Object({
+            psdUrl: t.String(),
+        }),
         response: t.Any(),
     }
 );
+
+export default route;

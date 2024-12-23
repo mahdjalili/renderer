@@ -4,7 +4,7 @@ import { getTemplates } from "../models/templates.model";
 
 const templatesList = await getTemplates();
 
-export const templates = new Elysia()
+export const route = new Elysia()
     .get(
         "/templates",
         ({ query: { page = 1, limit = 10 } }) => {
@@ -30,3 +30,5 @@ export const templates = new Elysia()
             response: t.Array(t.Any()),
         }
     );
+
+export default route;

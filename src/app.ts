@@ -2,10 +2,10 @@ import { Elysia } from "elysia";
 import { swagger } from "@elysiajs/swagger";
 import { cors } from "@elysiajs/cors";
 
-import { templates } from "./routes/templates.route";
-import { render } from "./routes/render.route";
-import { resize } from "./routes/resize.route";
-import { convert } from "./routes/convert.route";
+import templates from "./routes/templates.route";
+import render from "./routes/render.route";
+import resize from "./routes/resize.route";
+import convert from "./routes/convert.route";
 
 import { logger } from "./utils/logger";
 
@@ -20,10 +20,10 @@ const app = new Elysia()
         })
     )
     .use(swagger())
-    .use(convert)
     .use(templates)
     .use(render)
     .use(resize)
+    .use(convert)
     .get("/", "Hello World")
     .listen(port);
 

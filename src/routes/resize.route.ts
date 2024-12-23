@@ -1,7 +1,7 @@
 import { Elysia, t } from "elysia";
 import { magicResize } from "../services/resize.service";
 
-export const resize = new Elysia().post(
+export const route = new Elysia().post(
     "/resize",
     async ({ body }) => {
         let template = magicResize(body.template, body.data.width, body.data.height);
@@ -20,3 +20,5 @@ export const resize = new Elysia().post(
         }),
     }
 );
+
+export default route;
