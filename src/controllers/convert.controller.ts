@@ -9,6 +9,5 @@ export default class Convert {
         const psdFile = response.data;
         return convertPSDToTemplate(psdFile);
     };
-
     replaceTemplateVariables = replaceTemplateVariables;
 }
