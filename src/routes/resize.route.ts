@@ -1,6 +1,6 @@
 import { Elysia, t } from "elysia";
 import { magicResize } from "../services/resize.service";
-import APIKeyMiddleware from "../middlewares/apiKey.middleware";
+import APIKeyMiddleware from "../middlewares/auth.middleware";
 
 export const route = new Elysia().use(APIKeyMiddleware).post(
     "/resize",

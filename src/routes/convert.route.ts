@@ -1,6 +1,6 @@
 import { Elysia, t } from "elysia";
 import Controller from "../controllers/convert.controller";
-import APIKeyMiddleware from "../middlewares/apiKey.middleware";
+import APIKeyMiddleware from "../middlewares/auth.middleware";
 
 const convert = new Controller();
 

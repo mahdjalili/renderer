@@ -1,5 +1,4 @@
 import Elysia from "elysia";
-import { logger } from "../utils/logger";
 
 const VALID_API_KEYS = process.env.API_KEYS ? process.env.API_KEYS.split(",") : [];
 

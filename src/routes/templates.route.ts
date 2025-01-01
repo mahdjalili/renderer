@@ -1,7 +1,7 @@
 import { Elysia, t } from "elysia";
 import { paginate, paginateType } from "../utils/paginate";
 import { getTemplates } from "../models/templates.model";
-import APIKeyMiddleware from "../middlewares/apiKey.middleware";
+import APIKeyMiddleware from "../middlewares/auth.middleware";
 
 const templatesList = await getTemplates();
 
