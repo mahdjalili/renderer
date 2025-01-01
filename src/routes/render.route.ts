@@ -1,7 +1,9 @@
 import { Elysia, t } from "elysia";
 import { renderTemplate } from "../services/render.service";
+import APIKeyMiddleware from "../middlewares/apiKey.middleware";
 
 export const route = new Elysia()
+    .use(APIKeyMiddleware)
     .post(
         "/render",
         async ({ body }) => {

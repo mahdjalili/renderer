@@ -52,20 +52,14 @@ export async function loadGoogleFont(fontFamily: string) {
 }
 
 export async function renderTemplate(template: any): Promise<string> {
-    // Create stage with template dimensions
     const stage = new Konva.Stage({
         width: template.width,
         height: template.height,
-        // container: document.createElement("div"), // This won't be used in Node.js
     });
 
-    // Create main layer
     const layer = new Konva.Layer();
-
-    // Get the first page (assuming single page design)
     const page = template.pages[0];
 
-    // Set background
     const background = new Konva.Rect({
         x: 0,
         y: 0,
@@ -75,7 +69,6 @@ export async function renderTemplate(template: any): Promise<string> {
     });
     layer.add(background);
 
-    // Process each element in the template
     if (!page.children) return stage.toDataURL();
 
     for (const element of page.children) {
@@ -86,62 +79,7 @@ export async function renderTemplate(template: any): Promise<string> {
                     await loadGoogleFont(element.fontFamily);
                 }
 
-                const text = new Konva.Text({
-                    id: element.id,
-                    name: element.name,
-                    x: element.x,
-                    y: element.y,
-                    text: element.text,
-                    placeholder: element.placeholder,
-                    fontSize: element.fontSize,
-                    fontFamily: element.fontFamily,
-                    fontStyle: element.fontStyle,
-                    fontWeight: element.fontWeight,
-                    textDecoration: element.textDecoration,
-                    letterSpacing: element.letterSpacing,
-                    lineHeight: element.lineHeight,
-                    strokeWidth: element.strokeWidth,
-                    stroke: element.stroke,
-                    fill: element.fill,
-                    width: element.width,
-                    height: element.height,
-                    align: element.align,
-                    verticalAlign: element.verticalAlign,
-                    rotation: element.rotation,
-                    opacity: element.opacity,
-                    visible: element.visible,
-                    draggable: element.draggable,
-                    selectable: element.selectable,
-                    removable: element.removable,
-                    alwaysOnTop: element.alwaysOnTop,
-                    showInExport: element.showInExport,
-                    resizable: element.resizable,
-                    contentEditable: element.contentEditable,
-                    styleEditable: element.styleEditable,
-
-                    // Shadow properties
-                    shadowEnabled: element.shadowEnabled,
-                    shadowBlur: element.shadowBlur,
-                    shadowOffsetX: element.shadowOffsetX,
-                    shadowOffsetY: element.shadowOffsetY,
-                    shadowColor: element.shadowColor,
-                    shadowOpacity: element.shadowOpacity,
-
-                    // Filter properties
-                    blurEnabled: element.blurEnabled,
-                    blurRadius: element.blurRadius,
-                    brightnessEnabled: element.brightnessEnabled,
-                    brightness: element.brightness,
-                    sepiaEnabled: element.sepiaEnabled,
-                    grayscaleEnabled: element.grayscaleEnabled,
-
-                    // Background properties
-                    backgroundEnabled: element.backgroundEnabled,
-                    backgroundColor: element.backgroundColor,
-                    backgroundOpacity: element.backgroundOpacity,
-                    backgroundCornerRadius: element.backgroundCornerRadius,
-                    backgroundPadding: element.backgroundPadding,
-                });
+                const text = new Konva.Text({ ...element });
                 layer.add(text);
                 break;
 
@@ -162,49 +100,7 @@ export async function renderTemplate(template: any): Promise<string> {
                         image = await loadImageCanvas(buffer);
                     }
 
-                    const imageNode = new Konva.Image({
-                        id: element.id,
-                        name: element.name,
-                        x: element.x,
-                        y: element.y,
-                        image: image as unknown as HTMLImageElement,
-                        width: element.width,
-                        height: element.height,
-                        rotation: element.rotation,
-                        opacity: element.opacity,
-                        visible: element.visible,
-                        draggable: element.draggable,
-                        selectable: element.selectable,
-                        removable: element.removable,
-                        alwaysOnTop: element.alwaysOnTop,
-                        showInExport: element.showInExport,
-                        resizable: element.resizable,
-                        contentEditable: element.contentEditable,
-                        styleEditable: element.styleEditable,
-
-                        // Filter properties
-                        blurEnabled: element.blurEnabled,
-                        blurRadius: element.blurRadius,
-                        brightnessEnabled: element.brightnessEnabled,
-                        brightness: element.brightness,
-                        sepiaEnabled: element.sepiaEnabled,
-                        grayscaleEnabled: element.grayscaleEnabled,
-
-                        // Shadow properties
-                        shadowEnabled: element.shadowEnabled,
-                        shadowBlur: element.shadowBlur,
-                        shadowOffsetX: element.shadowOffsetX,
-                        shadowOffsetY: element.shadowOffsetY,
-                        shadowColor: element.shadowColor,
-                        shadowOpacity: element.shadowOpacity,
-
-                        // Additional image properties
-                        cornerRadius: element.cornerRadius,
-                        scaleX: element.flipX ? -1 : 1,
-                        scaleY: element.flipY ? -1 : 1,
-                        stroke: element.borderColor,
-                        strokeWidth: element.borderSize,
-                    });
+                    const imageNode = new Konva.Image({ ...element });
                     layer.add(imageNode);
                 } catch (error: any) {
                     console.error(`Error loading image:`, error.message);
@@ -237,42 +133,7 @@ export async function renderTemplate(template: any): Promise<string> {
                     const ctx = canvas.getContext("2d");
                     ctx.drawImage(image, 0, 0, image.width, image.height);
 
-                    const svgNode = new Konva.Image({
-                        id: element.id,
-                        name: element.name,
-                        x: element.x,
-                        y: element.y,
-                        image: (await loadImageCanvas(canvas.encodeSync("png"))) as unknown as HTMLImageElement,
-                        width: element.width,
-                        height: element.height,
-                        rotation: element.rotation,
-                        opacity: element.opacity,
-                        visible: element.visible,
-                        draggable: element.draggable,
-                        selectable: element.selectable,
-                        removable: element.removable,
-                        alwaysOnTop: element.alwaysOnTop,
-                        showInExport: element.showInExport,
-                        resizable: element.resizable,
-                        contentEditable: element.contentEditable,
-                        styleEditable: element.styleEditable,
-
-                        // Shadow properties
-                        shadowEnabled: element.shadowEnabled,
-                        shadowBlur: element.shadowBlur,
-                        shadowOffsetX: element.shadowOffsetX,
-                        shadowOffsetY: element.shadowOffsetY,
-                        shadowColor: element.shadowColor,
-                        shadowOpacity: element.shadowOpacity,
-
-                        // Filter properties
-                        blurEnabled: element.blurEnabled,
-                        blurRadius: element.blurRadius,
-                        brightnessEnabled: element.brightnessEnabled,
-                        brightness: element.brightness,
-                        sepiaEnabled: element.sepiaEnabled,
-                        grayscaleEnabled: element.grayscaleEnabled,
-                    });
+                    const svgNode = new Konva.Image({ ...element });
                     layer.add(svgNode);
                 } catch (err: any) {
                     console.error(`Failed to load SVG: ${err}`);
@@ -280,25 +141,13 @@ export async function renderTemplate(template: any): Promise<string> {
                 break;
 
             case "figure":
-                const figure = new Konva.Rect({
-                    x: element.x,
-                    y: element.y,
-                    width: element.width,
-                    height: element.height,
-                    fill: element.fill,
-                    rotation: element.rotation,
-                    opacity: element.opacity,
-                    visible: element.visible,
-                    cornerRadius: element.cornerRadius,
-                });
+                const figure = new Konva.Rect({ ...element });
                 layer.add(figure);
                 break;
         }
     }
-
     stage.add(layer);
 
-    // Render the stage to the canvas
     const canvas = stage.toCanvas();
     return canvas.toDataURL();
 }

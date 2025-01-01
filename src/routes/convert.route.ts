@@ -1,9 +1,11 @@
 import { Elysia, t } from "elysia";
 import Controller from "../controllers/convert.controller";
+import APIKeyMiddleware from "../middlewares/apiKey.middleware";
 
 const convert = new Controller();
 
 export const route = new Elysia()
+    .use(APIKeyMiddleware)
     .post(
         "/convert/psd",
         async ({ body }) => {

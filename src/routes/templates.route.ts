@@ -1,10 +1,12 @@
 import { Elysia, t } from "elysia";
 import { paginate, paginateType } from "../utils/paginate";
 import { getTemplates } from "../models/templates.model";
+import APIKeyMiddleware from "../middlewares/apiKey.middleware";
 
 const templatesList = await getTemplates();
 
 export const route = new Elysia()
+    .use(APIKeyMiddleware)
     .get(
         "/templates",
         ({ query: { page = 1, limit = 10 } }) => {
