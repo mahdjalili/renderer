@@ -7,15 +7,7 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model User {
-  id        Int      @id @default(autoincrement())
-  name      String
-  email     String   @unique
-  createdAt DateTime @default(now())
-}
-
 /* Template Model */
-
 model Template {
   id        Int    @id @default(autoincrement())
   image     String
@@ -24,6 +16,16 @@ model Template {
   height    Int
   fonts     String[]    // Store fonts array as JSON
   pages     Json    // Store pages and their children as a nested JSON
+  keywords  Keyword[]
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt // One-to-many relationship with `Page`
+}
+
+model Keyword {
+  id        Int    @id @default(autoincrement())
+  name      String
+  value     String
+  templates Template[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }

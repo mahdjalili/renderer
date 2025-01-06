@@ -3,7 +3,7 @@
     "version": "1.0.0",
     "type": "module",
     "scripts": {
-        "dev": "bun --watch src/app.ts",
+        "dev": "bun --watch src/app.ts | pino-pretty",
         "build": "bun build src/app.ts --target bun --outdir ./dist",
         "start": "NODE_ENV=production bun src/app.ts",
         "test": "bun test"
@@ -12,15 +12,19 @@
     "license": "ISC",
     "description": "",
     "dependencies": {
+        "@bogeychan/elysia-logger": "^0.1.7",
         "@elysiajs/cors": "^1.1.1",
         "@elysiajs/swagger": "^1.1.6",
+        "@image-tracer-ts/core": "^1.0.2",
         "@napi-rs/canvas": "0.1.59",
         "@prisma/client": "^6.1.0",
         "@webtoon/psd": "^0.4.0",
         "ag-psd": "^22.0.2",
         "axios": "^1.7.9",
         "canvas": "next",
+        "canvg": "^4.0.2",
         "elysia": "^1.1.26",
+        "imagetracerjs": "^1.2.6",
         "konva": "^9.3.16",
         "node-fetch": "^3.3.2",
         "prisma": "^6.1.0",

@@ -1,15 +1,13 @@
 import { Elysia, t } from "elysia";
-import Controller from "../controllers/convert.controller";
+import { psdUrlToTemplate, replaceTemplateVariables } from "../services/convert.service";
 import APIKeyMiddleware from "../middlewares/auth.middleware";
 
-const convert = new Controller();
-
 export const route = new Elysia()
-    .use(APIKeyMiddleware)
+    // .use(APIKeyMiddleware)
     .post(
         "/convert/psd",
-        async ({ body }) => {
-            return await convert.convertPsdToTemplate(body.psdUrl);
+        async ({ body }: { body: { psdUrl: string } }) => {
+            return await psdUrlToTemplate(body.psdUrl);
         },
         {
             body: t.Object({
@@ -25,8 +23,8 @@ export const route = new Elysia()
     )
     .post(
         "/convert/replacement",
-        async ({ body }) => {
-            return await convert.replaceTemplateVariables(body.template, body.replacements);
+        async ({ body }: { body: { template: any; replacements: any } }) => {
+            return await replaceTemplateVariables(body.template, body.replacements);
         },
         {
             body: t.Object({

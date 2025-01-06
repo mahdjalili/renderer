@@ -1,7 +1,10 @@
 import { Elysia } from "elysia";
 import { swagger } from "@elysiajs/swagger";
 import { cors } from "@elysiajs/cors";
-import { logger } from "./utils/logger";
+import { log, logger, fileLogger } from "./utils/logger";
+
+import { PrismaClient } from "@prisma/client";
+const prisma = new PrismaClient();
 
 import templates from "./routes/templates.route";
 import render from "./routes/render.route";
@@ -19,6 +22,8 @@ const app = new Elysia()
         })
     )
     .use(swagger())
+    .use(fileLogger)
+    .use(logger)
     .use(templates)
     .use(render)
     .use(resize)
@@ -27,7 +32,24 @@ const app = new Elysia()
         detail: {
             hide: true,
         },
-    })
-    .listen(port);
+    });
 
-logger(`App started on port ${port}`);
+async function main() {
+    app.listen(port);
+
+    if (process.env.NODE_ENV === "development") {
+        log.info(`Server is running on http://localhost:${port}`);
+    } else {
+        log.info(`Server is running on port ${port}`);
+    }
+}
+
+main()
+    .then(async () => {
+        await prisma.$disconnect();
+    })
+    .catch(async (e) => {
+        console.error(e);
+        await prisma.$disconnect();
+        process.exit(1);
+    });

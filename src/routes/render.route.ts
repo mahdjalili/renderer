@@ -3,7 +3,7 @@ import { renderTemplate } from "../services/render.service";
 import APIKeyMiddleware from "../middlewares/auth.middleware";
 
 export const route = new Elysia()
-    .use(APIKeyMiddleware)
+    // .use(APIKeyMiddleware)
     .post(
         "/render",
         async ({ body }) => {
