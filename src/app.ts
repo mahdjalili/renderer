@@ -3,8 +3,8 @@ import { swagger } from "@elysiajs/swagger";
 import { cors } from "@elysiajs/cors";
 import { log, logger, fileLogger } from "./utils/logger";
 
-import { PrismaClient } from "@prisma/client";
-const prisma = new PrismaClient();
+// import { PrismaClient } from "@prisma/client";
+// const prisma = new PrismaClient();
 
 import templates from "./routes/templates.route";
 import render from "./routes/render.route";
@@ -46,10 +46,10 @@ async function main() {
 
 main()
     .then(async () => {
-        await prisma.$disconnect();
+        // await prisma.$disconnect();
     })
     .catch(async (e) => {
         console.error(e);
-        await prisma.$disconnect();
+        // await prisma.$disconnect();
         process.exit(1);
     });

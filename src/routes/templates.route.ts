@@ -1,6 +1,5 @@
 import { Elysia, t } from "elysia";
-import { PrismaClient } from "@prisma/client";
-const prisma = new PrismaClient();
+
 
 import { getTemplates } from "../models/templates.model";
 import APIKeyMiddleware from "../middlewares/auth.middleware";
@@ -45,44 +44,6 @@ export const route = new Elysia()
                 description: "Get a template",
                 tags: ["Templates"],
                 summary: "Get a template",
-            },
-        }
-    ).post(
-        "/templates",
-        async ({ body }) => {
-            await prisma.template.create({
-                data: {
-                    image: body.image,
-                    ratio: body.ratio,
-                    width: body.width,
-                    height: body.height,
-                    fonts: body.fonts,
-                    pages: body.pages,
-                    keywords: {
-                        connectOrCreate: body.keywords.map((keyword: string) => {
-                            return { where: { name: keyword }, create: { name: keyword } };
-                        }),
-                    },
-                },
-            });
-
-            log.info(`Template created: ${body.image}`);
-        },
-        {
-            body: t.Object({
-                image: t.String(),
-                ratio: t.String(),
-                width: t.Number(),
-                height: t.Number(),
-                fonts: t.String(),
-                pages: t.Number(),
-                keywords: t.Array(t.String()),
-            }),
-            response: t.Any(),
-            detail: {
-                description: "Create a template",
-                tags: ["Templates"],
-                summary: "Create a template",
             },
         }
     );
