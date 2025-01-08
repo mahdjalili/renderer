@@ -82,7 +82,7 @@ export const canvasToSvg = (canvas: any) => {
 
 export const convertPSDToTemplate = (psdData: ArrayBuffer): any => {
     const psd = openPsd(psdData);
-    // console.log(psd.children);
+    // log.info(psd.children);
     return {
         width: psd.width,
         height: psd.height,
@@ -121,20 +121,15 @@ export const psdUrlToTemplate = async (psdUrl: string) => {
 
 type Replacements = Record<string, string | number | boolean>;
 export function replaceTemplateVariables(template: any, replacements: Replacements): any {
-    // Recursive function to traverse and replace variables
     function traverseAndReplace(obj: any): any {
         if (Array.isArray(obj)) {
-            // If it's an array, process each element
             return obj.map(traverseAndReplace);
         } else if (typeof obj === "object" && obj !== null) {
-            // If it's an object, replace variables in its keys/values
             const newObj: any = { ...obj };
             for (const key in newObj) {
                 if (typeof newObj[key] === "string") {
-                    // Replace placeholders in string values
                     newObj[key] = replacePlaceholders(newObj[key], replacements);
                 } else {
-                    // Recursively process nested objects/arrays
                     newObj[key] = traverseAndReplace(newObj[key]);
                 }
             }
@@ -146,12 +141,10 @@ export function replaceTemplateVariables(template: any, replacements: Replacemen
     }
 
     // Replace placeholders in a string or keep the type intact
-    function replacePlaceholders(str: string, replacements: Replacements): string | number | boolean {
+    function replacePlaceholders(str: string, replacements: Replacements): string {
         return str.replace(/\{\{(\w+)\}\}/g, (match, key) => {
             if (key in replacements) {
-                const value = replacements[key];
-                // Keep the original type intact for the replacement
-                return typeof value === "number" || typeof value === "boolean" ? value : String(value);
+                return String(replacements[key]);
             }
             return match;
         });

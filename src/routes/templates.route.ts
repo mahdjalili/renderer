@@ -1,6 +1,5 @@
 import { Elysia, t } from "elysia";
 
-
 import { getTemplates } from "../models/templates.model";
 import APIKeyMiddleware from "../middlewares/auth.middleware";
 
@@ -31,7 +30,7 @@ export const route = new Elysia()
     )
     .get(
         "/templates/:id",
-        async ({ params: { id } }) => {
+        async ({ params: { id } }: { params: { id: number } }) => {
             const template = templatesList[id];
             return template;
         },

@@ -11,7 +11,13 @@ export const loadSVG = async (svgData: string) => {
     return svg;
 };
 
+export const validUrl = (url: string) => {
+    return url.startsWith("http") || url.startsWith("data:image/");
+};
+
 export function replaceSvgColors(svgString: string, colorsReplace: Record<string, string>) {
+    // log.info(colorsReplace);
+    // log.info(svgString);
     let modifiedSvgString = svgString;
     if (colorsReplace) {
         Object.entries(colorsReplace).forEach(([fromColor, toColor]) => {
@@ -25,27 +31,34 @@ export function replaceSvgColors(svgString: string, colorsReplace: Record<string
 
 export async function loadGoogleFont(fontFamily: string) {
     try {
-        // Convert font family name to URL format
-        let fontPath = `./tmp/${fontFamily.replace(/\s+/g, "_")}.ttf`;
+        // Define common font weights to load
+        const weights = [100, 200, 300, 400, 500, 600, 700, 800, 900];
 
-        if (!(await Bun.file(fontPath).exists())) {
-            const fontQuery = fontFamily.replace(/\s+/g, "+");
-            const response = await fetch(`https://fonts.googleapis.com/css2?family=${fontQuery}`);
-            const css = await response.text();
+        for (const weight of weights) {
+            let fontPath = `./tmp/${fontFamily.replace(/\s+/g, "_")}_${weight}.ttf`;
 
-            // Extract the font URL from the CSS
-            const fontUrlMatch = css.match(/src: url\((.+?)\)/);
-            if (!fontUrlMatch) throw new Error("Font source not found");
+            if (!(await Bun.file(fontPath).exists())) {
+                const fontQuery = `${fontFamily.replace(/\s+/g, "+")}:wght@${weight}`;
+                const response = await fetch(`https://fonts.googleapis.com/css2?family=${fontQuery}`);
+                const css = await response.text();
 
-            // Download the font file
-            const fontUrl = fontUrlMatch[1];
-            const fontResponse = await fetch(fontUrl);
+                // Extract the font URL from the CSS
+                const fontUrlMatch = css.match(/src: url\((.+?)\)/);
+                if (!fontUrlMatch) continue; // Skip this weight if not found
 
-            await Bun.write(fontPath, await fontResponse.blob());
+                // Download the font file
+                const fontUrl = fontUrlMatch[1];
+                const fontResponse = await fetch(fontUrl);
 
-            // Register the font with node-canvas
+                await Bun.write(fontPath, await fontResponse.blob());
+            }
+
+            // Register each font weight
+            registerFont(fontPath, {
+                family: fontFamily,
+                weight: weight.toString(),
+            });
         }
-        registerFont(fontPath, { family: fontFamily });
 
         return true;
     } catch (error) {
@@ -111,6 +124,44 @@ export const postImageProcessing = async (image: string) => {
     }
 };
 
+function calculateObjectFit(
+    imgWidth: number,
+    imgHeight: number,
+    containerWidth: number,
+    containerHeight: number,
+    objectFit: "contain" | "cover" | "fill" = "contain"
+) {
+    const containerAspectRatio = containerWidth / containerHeight;
+    const imageAspectRatio = imgWidth / imgHeight;
+
+    let width = containerWidth;
+    let height = containerHeight;
+
+    switch (objectFit) {
+        case "contain":
+            if (imageAspectRatio > containerAspectRatio) {
+                height = width / imageAspectRatio;
+            } else {
+                width = height * imageAspectRatio;
+            }
+            break;
+
+        case "cover":
+            if (imageAspectRatio > containerAspectRatio) {
+                width = height * imageAspectRatio;
+            } else {
+                height = width / imageAspectRatio;
+            }
+            break;
+
+        case "fill":
+            // Use container dimensions directly
+            break;
+    }
+
+    return { width, height };
+}
+
 export async function renderTemplate(template: any): Promise<string> {
     const stage = new Konva.Stage({
         width: template.width,
@@ -142,15 +193,45 @@ export async function renderTemplate(template: any): Promise<string> {
                 break;
 
             case "image":
+                if (!validUrl(element.src)) {
+                    log.error(`Invalid image URL or Data: ${element.src}`);
+                    break;
+                }
                 try {
-                    let image;
+                    let originalImage = await postImageProcessing(element.src);
+
+                    const tempCanvas = createCanvasCanvas(element.width, element.height);
+                    const tempCtx = tempCanvas.getContext("2d");
+
+                    const fitDimensions = calculateObjectFit(
+                        originalImage.width,
+                        originalImage.height,
+                        element.width,
+                        element.height,
+                        element.objectFit || "contain"
+                    );
+
+                    tempCtx.drawImage(
+                        originalImage,
+                        (element.width - fitDimensions.width) / 2, // center horizontally
+                        (element.height - fitDimensions.height) / 2, // center vertically
+                        fitDimensions.width,
+                        fitDimensions.height
+                    );
+
+                    let finalImage;
                     if (element.mask) {
-                        image = await postImageProcessing(await applyMask(element.src, element.mask));
+                        finalImage = await postImageProcessing(await applyMask(tempCanvas.toDataURL(), element.mask));
                     } else {
-                        image = await postImageProcessing(element.src);
+                        finalImage = await postImageProcessing(tempCanvas.toDataURL());
                     }
 
-                    const imageNode = new Konva.Image({ ...element, image });
+                    const imageNode = new Konva.Image({
+                        ...element,
+                        image: finalImage,
+                        width: element.width,
+                        height: element.height,
+                    });
                     layer.add(imageNode);
                 } catch (error: any) {
                     log.error(`Error loading image:`, error.message);
@@ -158,23 +239,21 @@ export async function renderTemplate(template: any): Promise<string> {
                 break;
 
             case "svg":
+                if (!validUrl(element.src)) {
+                    log.error(`Invalid SVG URL or Data: ${element.src}`);
+                    break;
+                }
                 try {
-                    // Decode base64 SVG data to string
                     const svgString = Buffer.from(element.src.split(",")[1], "base64").toString("utf-8");
-
-                    // Replace colors if colorsReplace is defined
                     const modifiedSvgString = replaceSvgColors(svgString, element.colorsReplace);
 
-                    // Add width and height to SVG string if not present
                     let finalSvgString = modifiedSvgString;
                     if (!finalSvgString.includes("width=") || !finalSvgString.includes("height=")) {
-                        // Use a high resolution for better quality (2x the display size)
                         const width = element.width * 2;
                         const height = element.height * 2;
                         finalSvgString = finalSvgString.replace("<svg", `<svg width="${width}" height="${height}"`);
                     }
 
-                    // Convert modified SVG back to buffer
                     const svgData = Buffer.from(finalSvgString);
                     const image = await loadImageNapi(svgData);
 
