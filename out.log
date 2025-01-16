@@ -1,0 +1,1 @@
+{"level":50,"time":1737013361119,"pid":5132,"hostname":"Mahdis-MacBook-Pro.local","request":{"method":"POST","url":"http://localhost:8080/convert/psd","referrer":"http://localhost:8080/swagger"},"code":"UNKNOWN","message":"undefined is not an object (evaluating 'canvas.getContext')"}

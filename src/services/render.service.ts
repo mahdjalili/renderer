@@ -208,7 +208,7 @@ export async function renderTemplate(template: any): Promise<string> {
                         originalImage.height,
                         element.width,
                         element.height,
-                        element.objectFit || "contain"
+                        element.objectFit || "cover"
                     );
 
                     tempCtx.drawImage(
