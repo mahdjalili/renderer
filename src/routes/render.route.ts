@@ -1,9 +1,11 @@
 import { Elysia, t } from "elysia";
+import { html, Html } from "@elysiajs/html";
 import { renderTemplate } from "../services/render.service";
 import APIKeyMiddleware from "../middlewares/auth.middleware";
 
 export const route = new Elysia()
     // .use(APIKeyMiddleware)
+    .use(html())
     .post(
         "/render",
         async ({ body }) => {
@@ -21,6 +23,29 @@ export const route = new Elysia()
                 description: "Render template",
                 tags: ["Render"],
                 summary: "Render template",
+            },
+        }
+    )
+    .post(
+        "/render/preview",
+        async ({ body }) => {
+            const base64Image = await renderTemplate(body.template);
+            return `
+                <html>
+                    <body>
+                        <img src="${base64Image}" />
+                    </body>
+                </html>
+            `;
+        },
+        {
+            body: t.Object({
+                template: t.Any(),
+            }),
+            detail: {
+                description: "Preview rendered template as HTML",
+                tags: ["Render"],
+                summary: "Preview template rendering",
             },
         }
     )

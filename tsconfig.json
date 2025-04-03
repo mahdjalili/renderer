@@ -17,7 +17,10 @@
             "@models/*": ["./src/models/*"],
             "@services/*": ["./src/services/*"],
             "@utils/*": ["./src/utils/*"]
-        }
+        },
+        "jsx": "react",
+        "jsxFactory": "Html.createElement",
+        "jsxFragmentFactory": "Html.Fragment"
     },
     "include": ["src/**/*.ts"],
     "exclude": ["node_modules", "dist"]
