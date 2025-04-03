@@ -4,6 +4,15 @@ A powerful and flexible template rendering engine that provides a comprehensive 
 
 ## 🚀 Features
 
+### Rendering (Core Feature)
+
+-   **High-Performance Template Rendering**: Convert templates to high-quality images with support for multiple formats
+-   **Bulk Processing**: Efficiently render multiple templates in a single request
+-   **Real-time Preview**: Instant HTML preview of rendered templates
+-   **Base64 Output**: Direct base64 image output for easy integration
+-   **Dynamic Content**: Support for variable replacement and dynamic text
+-   **Multi-format Support**: Render templates with various content types (SVG, images, text)
+
 ### Template Management
 
 -   List all available templates with pagination support
@@ -15,13 +24,6 @@ A powerful and flexible template rendering engine that provides a comprehensive 
 -   Convert PSD files to templates using URL
 -   Dynamic variable replacement in templates
 -   Template customization capabilities
-
-### Rendering
-
--   Single template rendering with base64 image output
--   Bulk template rendering for multiple templates
--   HTML preview support for rendered templates
--   Real-time template visualization
 
 ### Image Manipulation
 
